@@ -1,0 +1,19 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+  {{ category.news_category }}
+{% endblock title %}
+
+{% block content %}
+    <h3>Категория - {{ category.news_category }}</h3>
+    <h4>Информация о категории постов</h4>
+    <br>
+    Подписчики:
+    {% for subscr in category.subscribers.all %}
+      <a href="/user/{{ subscr.id}}/">{{ subscr }}</a>, 
+    {% endfor %}
+
+    <hr>
+    <button> <a href="/news"> К новостям </a> </button>
+
+{% endblock content %}

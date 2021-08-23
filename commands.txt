@@ -1,0 +1,86 @@
+>>> from datetime import datetime
+>>> from django.contrib.auth.models import User
+>>> from news.models import Author, Category, Post, PostCategory, Comment
+>>> from django.db.models import Sum
+
+Создать двух пользователей
+>>> user1 = User.objects.create_user('Васятка', 'vasya@ya.ru', 'qwerty')
+>>> user2 = User.objects.create_user('Петя', 'petya@ya.ru', 'qwerty123')
+
+Создать два объекта модели Author, связанные с пользователями.
+>>> author1 = Author.objects.create(author=user1)
+>>> author2 = Author.objects.create(author=user2)
+
+Добавить 4 категории в модель Category.
+>>> sport = Category.objects.create(news_category='Спорт')
+>>> tech = Category.objects.create(news_category='Технологии')
+>>> games = Category.objects.create(news_category='Игры')
+>>> politics = Category.objects.create(news_category='Политика')
+
+Добавить 2 статьи и 1 новость.
+>>> paper1 = Post.objects.create(author=author1, heading='Microsoft презентовала новую ОС Windows 11', content='Американская корпорация Microsoft на онлайн-презентации представила новую версию своей операционной системы Windows 11.')
+>>> paper2 = Post.objects.create(author=author1, heading='МИД предупредил выезжающих за границу россиян о риске задержаний', content='Министерство иностранных дел России в четверг, 24 июня, опубликовало предупреждение для выезжающих за
+ границу граждан страны об угрозе подвергнуться задержанию в США и в третьих странах.')
+>>> news1 = Post.objects.create(author=author2,kind='NW', heading='В Epic Games Store стартовала раздача Sonic Mania и Horizon Chase Turbo', content='В цифровом магазине Epic Games началась бесплатная раздача двух игр от Sega и Aquiris
+ Game Studio. Получить Sonic Mania и Horizon Chase Turbo за бесплатно можно будет до 1 июля.')
+
+Присвоить им категории (как минимум в одной статье/новости должно быть не меньше 2 категорий).
+>>> news1.category.add(games, tech)
+
+Создать как минимум 4 комментария к разным объектам модели Post
+>>> comment1 = Comment.objects.create(post=paper1, user=user1, text_comment='WoW')
+>>> comment1 = Comment.objects.create(post=paper1, user=user1, text_comment='Doge')
+>>> comment2 = Comment.objects.create(post=paper1, user=user1, text_comment='Wow')
+>>> comment3 = Comment.objects.create(post=paper2, user=user1, text_comment='Amazing')
+>>> comment4 = Comment.objects.create(post=paper2, user=user2, text_comment='Lololo')
+
+Применяя функции like() и dislike() к статьям/новостям и комментариям, скорректировать рейтинги этих объектов.
+>>> paper1.like()
+>>> paper1.like()
+>>> paper1.like()
+>>> paper1.like()
+>>> paper1.like()
+>>> paper1.dislike()
+>>> paper2.like()
+>>> paper2.like()
+>>> news1.like()
+>>> news1.like()
+>>> news1.like()
+>>> news1.like()
+>>> news1.like()
+>>> news1.like()
+>>> news1.like()
+>>> news1.like()
+>>> comment1.like()
+>>> comment1.like()
+>>> comment4.like()
+>>> comment4.like()
+>>> comment4.like()
+>>> comment4.like()
+>>> comment4.like()
+>>> comment4.like()
+>>> comment4.like()
+>>> comment4.dislike()
+>>> comment4.dislike()
+>>> comment4.dislike()
+
+Обновить рейтинги пользователей.
+author1.update_rating()
+author2.update_rating()
+
+Вывести username и рейтинг лучшего пользователя
+>>> best = Author.objects.all().order_by('-author_rating')[0]
+>>> best_user = best.author
+>>> print(best_user.username, best.author_rating)
+
+Вывести дату добавления, username автора, рейтинг, заголовок и превью лучшей статьи, основываясь на лайках/дислайках к этой статье.
+>>> best_st = Post.objects.all().order_by('-post_rating')[0]
+>>> print('Лучшая статья: ' + best_st.heading)
+>>> print('Дата создания: ' + str(best_st.post_data))
+>>> print('Пользователь: ' + str(best_st.author.author))
+>>> print('Рейтинг: ' + str(best_st.post_rating))
+>>> print('Превью: ' + best_st.preview())
+
+Вывести все комментарии (дата, пользователь, рейтинг, текст) к этой статье.
+>>> all_comm = best_st.comment_set.all()
+>>> for comm in all_comm: print(comm.comment_data, comm.user, comm.comment_rating, comm.text_comment)

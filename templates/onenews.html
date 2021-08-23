@@ -1,0 +1,20 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+
+
+{% block content %}
+    <div>
+        <h2>{{ onenews.heading|censorship:False }}</h2>
+        <p> {% for category in onenews.category.all %}
+                <a href="{% url 'category' category.pk %}">{{ category.news_category }}</a>
+            {% endfor %}
+        </p>
+        <h3>{{ onenews.post_data|date:'d-m-y h:m' }}</h3>
+        <p>{{ onenews.content|censorship:False }}</p>
+        <a href="{% url 'post_edit' onenews.id %}">Редактировать новость</a>
+        <a href="{% url 'post_delete' onenews.id %}">Удалить новость</a>
+        {% for category in onenews.category.all %}
+            <a href="/category/subscribe/?category={{ category.id }}">Подписаться на {{ category.news_category }}</a><br>
+        {% endfor %}
+    </div>
+{% endblock content %}

@@ -1,0 +1,16 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+
+
+{% block content %}
+    <div>
+        <h2>{{ onenews.heading|censorship:False }}</h2>
+        <h3>{{ onenews.post_data|date:'d-m-y h:m' }}</h3>
+        <p>{{ onenews.content|censorship:False }}</p>
+        <form method="POST">
+          {% csrf_token %}
+          <input type="submit" value="подтвердить">
+        </form>
+
+    </div>
+{% endblock content %}
